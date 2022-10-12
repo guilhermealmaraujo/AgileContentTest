@@ -9,7 +9,7 @@ namespace CandidateTesting.GuilhermeAnastacioLimaMotaDeAraujo.ConvertingLogFiles
 {
     public class AgoraToMyCdnLogFileConverter : IMyCdnLogFileConverter
     {
-        public FileOperationAtempt convert(MyCdnLogFileSource myCdnLogFileSource)
+        public FileOperationAtempt convert(ILogFileSource myCdnLogFileSource)
         {
             FileOperationAtempt retriveLogDataAttempt = myCdnLogFileSource.retrieveLogFileContentData();
 
@@ -41,7 +41,7 @@ namespace CandidateTesting.GuilhermeAnastacioLimaMotaDeAraujo.ConvertingLogFiles
 
                     foreach (var line in content)
                     {
-                        if (line == content.Last()) break;
+                        if (line.Trim('\n') == "") continue;
 
                         string[] fields = line.Split("|");
 

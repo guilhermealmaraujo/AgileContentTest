@@ -2,6 +2,6 @@
 {
     public interface IMyCdnLogFileConverter
     {
-        public FileOperationAtempt convert(MyCdnLogFileSource myCdnLogFileSource);
+        public FileOperationAtempt convert(ILogFileSource myCdnLogFileSource);
     }
 }
