@@ -32,29 +32,38 @@ namespace CandidateTesting.GuilhermeAnastacioLimaMotaDeAraujo.ConvertingLogFiles
 
             HttpClient client = new HttpClient();
 
-            var res = client.GetAsync(myCdnUrlSourceReference).Result;
-
-            while (!res.IsSuccessStatusCode && numberOfTries <= maxTries)
+            try
             {
-                numberOfTries++;
+                var res = client.GetAsync(myCdnUrlSourceReference).Result;
 
-                attempsReport.AppendLine("Attempt " + numberOfTries + " failed. \n");
+                while (!res.IsSuccessStatusCode && numberOfTries <= maxTries)
+                {
+                    numberOfTries++;
 
-                Thread.Sleep(1000);
+                    attempsReport.AppendLine("Attempt " + numberOfTries + " failed. \n");
 
-                res = client.GetAsync(myCdnUrlSourceReference).Result;
+                    Thread.Sleep(1000);
+
+                    res = client.GetAsync(myCdnUrlSourceReference).Result;
+                }
+
+                if (numberOfTries > maxTries)
+                {
+                    logDataRetrievingFailed = true;
+
+                    attempsReport.AppendLine("The url given is not working.");
+                }
+                else
+                {
+                    attempsReport.AppendLine("The data from the url was retrieved.");
+                    fileContent.Append(res.Content.ReadAsStringAsync().Result);
+                }
             }
-
-            if (numberOfTries > maxTries)
+            catch (Exception e) 
             {
                 logDataRetrievingFailed = true;
-
+                attempsReport.AppendLine("A problem happened: "+e.Message);
                 attempsReport.AppendLine("The url given is not working.");
-            }
-            else
-            {
-                attempsReport.AppendLine("The data from the url was retrieved.");
-                fileContent.Append(res.Content.ReadAsStringAsync().Result);
             }
 
             FileOperationAtempt retrievingAttemptResult = new FileOperationAtempt(fileContent, logDataRetrievingFailed, attempsReport);
